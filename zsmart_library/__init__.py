@@ -5,8 +5,8 @@
 __author__ = """Bineli Hervé"""
 __email__ = 'arsene.bineli@orange.com'
 __version__ = '0.1.0'
+__name__ = 'ZsmartLibrary'
 
-from ZsmartLibrary import *
-
+from zsmart_library import *
 
 
