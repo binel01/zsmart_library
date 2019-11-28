@@ -7,6 +7,4 @@ __email__ = 'arsene.bineli@orange.com'
 __version__ = '0.1.0'
 __name__ = 'ZsmartLibrary'
 
-from zsmart_library import *
-
-
+from ZsmartLibrary import *

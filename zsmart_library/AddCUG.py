@@ -1,8 +1,9 @@
 import requests
 from lxml import etree
 
+
 def AddCUG(cug_name, admin_msisdn='', admin_pwd='', cug_type='C', ipp_code='20360', member_amount='5'):
-	xml = """ <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ocs="http://ocs.ztesoft.com">
+    xml = """ <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ocs="http://ocs.ztesoft.com">
 		        <soapenv:Header>
 			        <AuthHeader xmlns="http://ZTEsoft.com/webservices/">
 			            <Username>zsmart</Username>
@@ -38,35 +39,37 @@ def AddCUG(cug_name, admin_msisdn='', admin_pwd='', cug_type='C', ipp_code='2036
 				</soapenv:Body>
 				</soapenv:Envelope>"""
 
-	# set the parameters
-	end_point = 'http://172.27.82.33:9060/ocswebservices/services/WebServices.WebServicesHttpSoap11Endpoint/'
-	headers = {'Content-Type': 'text/xml'}
+    # set the parameters
+    end_point = 'http://172.27.82.33:9060/ocswebservices/services/WebServices.WebServicesHttpSoap11Endpoint/'
+    headers = {'Content-Type': 'text/xml'}
 
-	xml = xml.replace("cug_name", str(cug_name))
-	xml = xml.replace("admin_msisdn", str(admin_msisdn))
-	xml = xml.replace("admin_pwd", str(admin_pwd))
-	xml = xml.replace("cug_type", str(cug_type))
-	xml = xml.replace("ipp_code", str(ipp_code))
-	xml = xml.replace("member_amount", str(member_amount))
+    xml = xml.replace("cug_name", str(cug_name))
+    xml = xml.replace("admin_msisdn", str(admin_msisdn))
+    xml = xml.replace("admin_pwd", str(admin_pwd))
+    xml = xml.replace("cug_type", str(cug_type))
+    xml = xml.replace("ipp_code", str(ipp_code))
+    xml = xml.replace("member_amount", str(member_amount))
 
-	# send the request
-	result = requests.post(end_point, data=xml, headers=headers)
+    # send the request
+    result = requests.post(end_point, data=xml, headers=headers)
 
-	# clean the result
-	new_xml = result.text.replace('&lt;', '<')
-	new_xml = new_xml.replace('&gt;', '>')
-	new_xml = new_xml.replace("""<?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><doServiceResponse xmlns="http://ocs.ztesoft.com"><doServiceReturn><?xml version="1.0" encoding="UTF-8"?>""", '')
-	new_xml = new_xml.replace("""</doServiceReturn></doServiceResponse></soapenv:Body></soapenv:Envelope>""", '')
+    # clean the result
+    new_xml = result.text.replace('&lt;', '<')
+    new_xml = new_xml.replace('&gt;', '>')
+    new_xml = new_xml.replace(
+        """<?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><doServiceResponse xmlns="http://ocs.ztesoft.com"><doServiceReturn><?xml version="1.0" encoding="UTF-8"?>""", '')
+    new_xml = new_xml.replace(
+        """</doServiceReturn></doServiceResponse></soapenv:Body></soapenv:Envelope>""", '')
 
-    # We get the CUG
-	root = etree.fromstring(new_xml)
-	return_msg = root.xpath('//zsmart/Data/header/returnMsg')[0].text
+# We get the CUG
+    root = etree.fromstring(new_xml)
+    return_msg = root.xpath('//zsmart/Data/header/returnMsg')[0].text
 
-	cug_id = 0
-	if return_msg == 'Successful':
-		print('AddCUG request has been executed successfully !')
-		cug_id = root.xpath('//zsmart/Data/body/CUGID')[0].text
-	else:
-		raise Exception('AddCUG: ' + return_msg)
-	
-	return cug_id
+    cug_id = 0
+    if return_msg == 'Successful':
+        print('AddCUG request has been executed successfully !')
+        cug_id = root.xpath('//zsmart/Data/body/CUGID')[0].text
+    else:
+        raise Exception('AddCUG: ' + return_msg)
+
+    return cug_id
